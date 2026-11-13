@@ -3,6 +3,8 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
 
 void piazzaRelitto(Partita *p){
 
@@ -154,6 +156,88 @@ void inizializzaMappa(Partita *p){
 	}
 
 }
+
+char carattereCasella(Casella c){
+
+	char carattere;
+
+	if(c.stato==NASCOSTA)
+		return '?';
+	else{
+
+		if(c.terreno==ACCAMPAMENTO)
+			return 'C';
+
+		if(c.terreno==SPIAGGIA)
+			carattere = 'b';
+
+		if(c.terreno==FORESTA)
+			carattere = 'f';
+		
+
+		if(c.terreno==PALUDE)
+			carattere = 'p';
+
+		if(c.terreno==COLLINA)
+			carattere = 'c';
+
+		if(c.terreno==SORGENTE)
+			carattere = 'o';
+
+		if(c.terreno==SENTIERO)
+			carattere = 's';
+
+		if(c.terreno==RELITTO)
+			carattere = 'r';
+
+		if(c.terreno==GROTTA)
+			carattere = 'g';
+
+		if(c.terreno==TANA)
+			carattere = 't';
+
+		if(c.terreno==FARO)
+			carattere = 'l';
+
+		if(c.stato == VISITATA)
+			carattere = carattere - 32;
+
+	}
+
+	return carattere;
+}
+
+
+
+void stampaMappa(Partita *p, Naufrago *explorer, int rigaExplorer, int colExplorer, int passiFatti){
+
+	if(explorer!=NULL)
+		printf("Mappa dell'isola, Giorno %d | %d passi | Naufrago %d (%d vita)\n", p->giorno_corrente, passiFatti, explorer->id, explorer->salute);
+	else
+		printf("Mappa dell'isola, Giorno %d\n", p->giorno_corrente);
+
+	printf("  0 1 2 3 4 5 6 7 8\n");
+
+	for(int i=0;i<DIM_MAPPA;i++){
+		printf("%d ", i);
+		for(int j=0;j<DIM_MAPPA;j++){
+			if(explorer!=NULL && rigaExplorer==i && colExplorer==j){	
+					printf("# ");
+			}
+			else{
+				printf("%c ", carattereCasella(p->mappa[i][j]));
+			}
+		}
+
+		printf("\n");
+
+	}
+
+	printf("Legenda: # naufrago C Accampamento b/B Spiaggia f/F Foresta p/P Palude c/C Collina o/O Sorgente s/S Sentiero\nr/R Relitto g/G Grotta t/T Tana l/L Faro ? nascosta\n");
+
+
+}
+
 
 
 

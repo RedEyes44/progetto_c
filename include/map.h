@@ -5,8 +5,7 @@
 
 void inizializzaMappa(Partita *p);
 
-
-
+void stampaMappa(Partita *p, Naufrago *explorer, int rigaExplorer, int colExplorer, int passiFatti);
 
 
 

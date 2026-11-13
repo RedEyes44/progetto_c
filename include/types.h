@@ -1,5 +1,3 @@
-/** @file types.h @brief ... */
-
 #ifndef TYPES_H
 #define TYPES_H
 
@@ -98,7 +96,7 @@ typedef struct Partita{
 
 	int giorno_corrente; /**< Giorno corrente, se arriva a 30, la partita è persa */
 
-	Naufrago *squadra;  /**< L'array dinamico della squadra */
+	Naufrago *squadra;  /**< Puntatore alla testa della lista dinamica della squadra */
 
 	int count_id_naufraghi;  /**<  Tiene traccia dell'id dell'ultimo naufrago arrivato. 
 	Ogni volta che si aggiunge un naufrago viene incrementato (così facendo, se ad esempio il naufrago 4 muore, il nuovo naufrago non avrà come numero il 4 ma il 5)  */
