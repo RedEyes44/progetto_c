@@ -5,10 +5,6 @@
 
 #include <stdbool.h>
 
-/**
- * @file types.h
- * @brief Strutture e tipi di dato principali e costanti globali.
- */
 
 #define DIM_MAPPA 9 /**< Dimensione della mappa (9X9) */
 #define CENTRO_MAPPA 4 /**< Posizione dell'accampamento (4X4) */
