@@ -1,3 +1,8 @@
+/**
+ * @file types.h
+ * @brief Strutture e tipi di dato principali e costanti globali.
+ */
+
 #ifndef TYPES_H
 #define TYPES_H
 

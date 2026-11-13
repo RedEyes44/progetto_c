@@ -151,19 +151,19 @@ void piazzaSorgente(Partita *p){
 void inizializzaMappa(Partita *p){
 
 
-	for(int r=0;r<DIM_MAPPA;r++) /**< Tramite un for annidato, vengono fatte scorrere tutte le caselle della mappe*/
+	for(int r=0;r<DIM_MAPPA;r++) /* Tramite un for annidato, vengono fatte scorrere tutte le caselle della mappe*/
 		for(int c=0;c<DIM_MAPPA;c++){
-			p->mappa[r][c].evento_completato=false; /**< All'inizio della partita, gli eventi sono ancora tutti da completare, oppure la casella ha un terreno "normale", perciò si setta subito l'evento a false*/
-			if(r==CENTRO_MAPPA && c==CENTRO_MAPPA){ /**< Se si arriva alla cella [4][4], si "piazza" l'accampamento*/
+			p->mappa[r][c].evento_completato=false; /* All'inizio della partita, gli eventi sono ancora tutti da completare, oppure la casella ha un terreno "normale", perciò si setta subito l'evento a false*/
+			if(r==CENTRO_MAPPA && c==CENTRO_MAPPA){ /* Se si arriva alla cella [4][4], si "piazza" l'accampamento*/
 				p->mappa[r][c].stato = VISITATA;
 				p->mappa[r][c].terreno = ACCAMPAMENTO;
-			}else{                                   /** Altrimenti, si procederà con gli altri casi*/
+			}else{                                   /* Altrimenti, si procederà con gli altri casi*/
 
-				if(r==0 || c==0 || r==8 || c==8){    /** Se la cella si trova sul bordo, verrà settata come SPIAGGIA e, ovviamente, come NASCOSTA */
+				if(r==0 || c==0 || r==8 || c==8){    /* Se la cella si trova sul bordo, verrà settata come SPIAGGIA e, ovviamente, come NASCOSTA */
 					p->mappa[r][c].stato = NASCOSTA;
 					p->mappa[r][c].terreno = SPIAGGIA;
 				}else{
-					p->mappa[r][c].stato = NASCOSTA; /** Altrimenti, la cella verrà settata sempre come nascosta, ma gli verrà assegnato il tipo di TERRENO CASUALMENTE */
+					p->mappa[r][c].stato = NASCOSTA; /* Altrimenti, la cella verrà settata sempre come nascosta, ma gli verrà assegnato il tipo di TERRENO CASUALMENTE */
 
 					int bioma = rand() % 6 + 1;
 
@@ -185,12 +185,12 @@ void inizializzaMappa(Partita *p){
 			}
 		}
 
-	piazzaRelitto(p); /** Attraverso le rispettive funzioni, si settano i luoghi speciali */
+	piazzaRelitto(p); /* Attraverso le rispettive funzioni, si settano i luoghi speciali */
 	piazzaFaro(p);
 	piazzaGrotta(p);
 	piazzaTana(p);
 
-	if(!sorgente(p)){ /** Se non c'è nessuna sorgente, ne viene messa una casualmente */
+	if(!sorgente(p)){ /* Se non c'è nessuna sorgente, ne viene messa una casualmente */
 
 		piazzaSorgente(p);
 
@@ -258,21 +258,21 @@ char carattereCasella(Casella c){
 
 void stampaMappa(Partita *p, Naufrago *explorer, int rigaExplorer, int colExplorer, int passiFatti){
 
-	if(explorer!=NULL) /** Se c'è un esploratore in missione, si stampano anche passi fatti, numero e salute del naufrago*/
+	if(explorer!=NULL) /* Se c'è un esploratore in missione, si stampano anche passi fatti, numero e salute del naufrago*/
 		printf("Mappa dell'isola, Giorno %d | %d passi | Naufrago %d (%d vita)\n", p->giorno_corrente, passiFatti, explorer->id, explorer->salute);
 	else
 		printf("Mappa dell'isola, Giorno %d\n", p->giorno_corrente);
 
-	printf("  0 1 2 3 4 5 6 7 8\n");      /** Numerazione delle colonne*/
+	printf("  0 1 2 3 4 5 6 7 8\n");      /* Numerazione delle colonne*/
 
 	for(int i=0;i<DIM_MAPPA;i++){
-		printf("%d ", i);   /** Numerazione di ogni colonna */
+		printf("%d ", i);   /* Numerazione di ogni colonna */
 		for(int j=0;j<DIM_MAPPA;j++){
-			if(explorer!=NULL && rigaExplorer==i && colExplorer==j){	/** Se c'è l'esploratore in missione e viene trovato, si stampa il carattere relativo */
+			if(explorer!=NULL && rigaExplorer==i && colExplorer==j){	/* Se c'è l'esploratore in missione e viene trovato, si stampa il carattere relativo */
 					printf("# ");
 			}
 			else{
-				printf("%c ", carattereCasella(p->mappa[i][j])); /** altrimenti, stampa il carattere corrispondente*/
+				printf("%c ", carattereCasella(p->mappa[i][j])); /* altrimenti, stampa il carattere corrispondente*/
 			}
 		}
 
@@ -284,9 +284,3 @@ void stampaMappa(Partita *p, Naufrago *explorer, int rigaExplorer, int colExplor
 
 
 }
-
-
-
-
-
-
