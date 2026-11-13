@@ -1,0 +1,6 @@
+*.o
+*.out
+*.exe
+docs/html/
+docs/latex/
+docs/token.txt
