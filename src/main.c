@@ -10,12 +10,18 @@ int main() {
 
     srand(time(NULL));
 
+    Naufrago test = {1, 10, NULL};
+
+    p.giorno_corrente = 1;
+
     inizializzaMappa(&p);
 
-    //rivelaFaro(&p);
-    rivelaMappa(&p);
+    gestisciSpedizione(&p, &test);
 
-    stampaMappa(&p, NULL, 0, 0, 0);
+    //rivelaFaro(&p);
+    //rivelaMappa(&p);
+
+    //stampaMappa(&p, NULL, 0, 0, 0);
     return 0;
     
 }

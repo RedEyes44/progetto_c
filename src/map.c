@@ -321,7 +321,7 @@ void rivelaFaro(Partita *p){
 void rivelaCollina(Partita *p, int r, int c){
 
 	for(int i=r-1;i<=(r+1);i++)       /* Scorre tutte le caselle adiacenti alla casella della collina, anche quelle diagonali*/
-		for(int j=c-1;j<=(c+1);c++)
+		for(int j=c-1;j<=(c+1);j++)
 			if(i>=0 && i<DIM_MAPPA && j>=0 && j<DIM_MAPPA) /*Con questo controllo, non potrà mai andare "fuori dai bordi"*/
 				if(p->mappa[i][j].stato==NASCOSTA)
 					p->mappa[i][j].stato=RIVELATA;
@@ -358,8 +358,124 @@ void rivelaSentiero(Partita *p, int r, int c){  /* Si basa su 4 if separato, uno
 		rivelaSentiero(p,r,c+1); /* E poi "continua" lungo il sentiero */
 	}
 
+}
+
+bool gestisciSpedizione(Partita *p, Naufrago *explorer){
+
+	int r = CENTRO_MAPPA;   /* La spedizione parte dall'accampamento*/
+	int c = CENTRO_MAPPA;
+	int passi = 0;
+	char comando;
+
+	while(passi<MAX_PASSI && explorer->salute>0){  /* La spedizione continua fino a quando si hanno fatto meno di 8 passi e il naufrago è ancora vivo*/
+		stampaMappa(p, explorer, r, c, passi);
+		printf("Muoviti con (w/a/s/d) o rientra con (r): ");  //!!FUNZIONE LEGGICHAR
+		scanf(" %c", &comando);
+		
+		printf("\033[H\033[J");  //system("clear"); // Su Linux / WSL / macOS. Servono entrambe per ripulire il cmd
+
+		if(comando=='r' || comando=='R'){    /*Se la scelta è r, il naufrago rientra dalla spedizione (Il break fa uscire subito dal ciclo)*/
+			printf("Rientro all'accampamento...\n");
+			break;
+		}
+
+		int nuovaR = r;   /* Queste variabili servono per aggiornare la posizione del naugrago dopo lo spostamento */
+		int nuovaC = c;
+
+		switch(comando){
+			case 'w': case 'W':{
+				nuovaR--;
+				break;
+			}
+
+			case 's': case 'S':{
+				nuovaR++;
+				break;
+			}
+
+			case 'a': case 'A':{
+				nuovaC--;
+				break;
+			}
+
+			case 'd': case 'D':{
+				nuovaC++;
+				break;
+			}
+
+			default:{         /* Se la lettere non corrisponde a nessuna tra (w/a/s/d), con il continue viene saltato il resto del ciclo */
+				printf("Valore non valido!\n");
+				continue;
+			}
+		}	
+
+		if(nuovaR<0 || nuovaR>=DIM_MAPPA || nuovaC<0 || nuovaC>=DIM_MAPPA){ /*Se il naufrago cerca di uscire dalla mappa, con il continue viene saltato il resto del ciclo*/
+			printf("Non puoi uscire dalla mappa...\n");
+			continue;
+		}
+
+		r = nuovaR;  /*La posizione viene aggiornata e i passi vengono incrementati solo se la lettera è valida e se il naufrago rimane dentro la mappa*/
+		c = nuovaC;
+
+		passi++;
+
+		Casella *pos = &p->mappa[r][c];   /* Si punta alla cella della mappa calpestata e si modifica il suo stato. Vengono gestiti sentieri, colline, sorgenti ed eventi*/
+		pos->stato = VISITATA;
+
+		if(!pos->evento_completato && pos->terreno != ACCAMPAMENTO){
+			switch(pos->terreno){
+
+				case COLLINA:{
+					printf("Collina trovata, da qui puoi vedere i dintorni!\n");
+					rivelaCollina(p, r, c);
+					pos->evento_completato = true;
+					break;
+				}
+
+				case SENTIERO:{
+					printf("Sentiero trovato, ora puoi vedere tutta la via!\n");
+					rivelaSentiero(p, r, c);
+					pos->evento_completato = true;
+					break;
+				}
+
+				case SORGENTE:{
+					printf("Sorgente trovata ( +4 Acqua)!\n");
+
+					p->magazzino.acqua = p->magazzino.acqua+4;
+
+					p->sorgente = true;
+
+					pos->evento_completato = true;
+
+					break;
+				}
+
+				default:{
+
+					printf("Evento del Membro C su questa casella!\n");  //!!
 
 
+					/* if (gestisciEvento(p, explorer, pos)) return true; */
 
+					if(explorer->salute<=0){
+						printf("Il naufrago è morto..\n");
+						/* rimuoviNaufrago(p, explorer->id); */
+						return false;
+					}
+				}
+
+			}
+		}
+
+
+	}
+
+	if(passi == MAX_PASSI){
+		stampaMappa(p, explorer, r, c, passi);
+		printf("Passi esauriti, ritorna all'accampamento..\n");
+	}
+
+	return false;
 
 }

@@ -41,9 +41,22 @@ void rivelaMappa(Partita *p);
 /**
  * 
  * @brief Rende visibile la casella del faro. Da usare per il menu' trucchi.
- * param p Partita a cui fa riferimento la mappa
+ * @param p Partita a cui fa riferimento la mappa
  * 
  */
 void rivelaFaro(Partita *p);
+
+/**
+ * 
+ * @brief Fa muovere il simbolo del naufrago in spedizione (#) dopo aver letto il comando da tastiera (w,a,s,d o r).
+ * @bref Inoltre, aggiorna i passi fatti e cambia lo stato delle caselle calpestate in VISITATA, e gestisce direttamente COLLINA, SENTIERO E SORGENTE
+ * @param p Partita a cui fa riferimento la 
+ * @param explorer Puntatore al naufrago in spedizione
+ * @return true olo se il giocatore vince al faro, false in tutti gli altri casi
+ * 
+ */
+
+
+bool gestisciSpedizione(Partita *p, Naufrago *explorer);
 
 #endif
