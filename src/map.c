@@ -6,6 +6,9 @@
 
 #include "types.h"
 #include "map.h"
+#include "utils.h"
+#include "camp.h"
+#include "events.h"
 #include <time.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -299,10 +302,64 @@ void rivelaMappa(Partita *p){
 
 void rivelaFaro(Partita *p){
 
-	for(int i=0;i<DIM_MAPPA;i++)    /* Scorre tutte le caselle della mappa. Se la casella corrente corrisponder al faro e termina la funzione con return*/
+	for(int i=0;i<DIM_MAPPA;i++)    /* Scorre tutte le caselle della mappa. Se la casella corrente corrisponde al faro ed è nascosta, la rivela e termina la funzione con return*/
 		for(int j=0;j<DIM_MAPPA;j++)
-			if(p->mappa[i][j].terreno==FARO){
+			if(p->mappa[i][j].terreno==FARO && p->mappa[i][j].stato == NASCOSTA){
 				p->mappa[i][j].stato=RIVELATA;
 				return;
 			}
+}
+
+/**
+ * @brief Cambia lo stato in RIVELATA delle caselle 8 caselle adiacenti alla posizione del naufrago (da chiamare quando il naufrago trova una collina)
+ * @param p Partita a cui fa riferimento la mappa
+ * @param r Riga della collina trovata
+ * @param c Colonna della collina trovata
+ * 
+ */
+
+void rivelaCollina(Partita *p, int r, int c){
+
+	for(int i=r-1;i<=(r+1);i++)       /* Scorre tutte le caselle adiacenti alla casella della collina, anche quelle diagonali*/
+		for(int j=c-1;j<=(c+1);c++)
+			if(i>=0 && i<DIM_MAPPA && j>=0 && j<DIM_MAPPA) /*Con questo controllo, non potrà mai andare "fuori dai bordi"*/
+				if(p->mappa[i][j].stato==NASCOSTA)
+					p->mappa[i][j].stato=RIVELATA;
+}
+
+/**
+ * @brief Rivela tutte le caselle di un sentiero ricorsivamente
+ * @param p Partita a cui fa riferimento la mappa
+ * @param r Riga di partenza del sentiero
+ * @param c Colonna di partenza del sentiero
+ * 
+ * 
+ */
+
+void rivelaSentiero(Partita *p, int r, int c){  /* Si basa su 4 if separato, uno per direzione di espansione */
+
+	if((r-1)>=0 && p->mappa[r-1][c].terreno==SENTIERO && p->mappa[r-1][c].stato==NASCOSTA){ /*Controlla e aggiorna la casella appena sopra*/
+		p->mappa[r-1][c].stato=RIVELATA;
+		rivelaSentiero(p,r-1,c);   /* E poi "continua" lungo il sentiero */
+	}
+
+	if((r+1)<DIM_MAPPA && p->mappa[r+1][c].terreno==SENTIERO && p->mappa[r+1][c].stato==NASCOSTA){ /*Controlla e aggiorna la casella appena sotto*/
+		p->mappa[r+1][c].stato=RIVELATA;
+		rivelaSentiero(p,r+1,c); /* E poi "continua" lungo il sentiero */
+	}
+
+	if((c-1)>=0 && p->mappa[r][c-1].terreno==SENTIERO && p->mappa[r][c-1].stato==NASCOSTA){ /*Controlla e aggiorna la casella appena a sinistra*/
+		p->mappa[r][c-1].stato=RIVELATA;
+		rivelaSentiero(p,r,c-1); /* E poi "continua" lungo il sentiero */
+	}
+
+	if((c+1)<DIM_MAPPA && p->mappa[r][c+1].terreno==SENTIERO && p->mappa[r][c+1].stato==NASCOSTA){ /*Controlla e aggiorna la casella appena a destra*/
+		p->mappa[r][c+1].stato=RIVELATA;
+		rivelaSentiero(p,r,c+1); /* E poi "continua" lungo il sentiero */
+	}
+
+
+
+
+
 }
