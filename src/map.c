@@ -284,3 +284,25 @@ void stampaMappa(Partita *p, Naufrago *explorer, int rigaExplorer, int colExplor
 
 
 }
+
+
+
+void rivelaMappa(Partita *p){
+
+	for(int i=0;i<DIM_MAPPA;i++)   /* Scorre tutte le caselle della mappa. Se la casella corrente è nascosta, la rivela.*/
+		for(int j=0;j<DIM_MAPPA;j++)
+			if(p->mappa[i][j].stato==NASCOSTA)
+				p->mappa[i][j].stato=RIVELATA;
+
+
+}
+
+void rivelaFaro(Partita *p){
+
+	for(int i=0;i<DIM_MAPPA;i++)    /* Scorre tutte le caselle della mappa. Se la casella corrente corrisponder al faro e termina la funzione con return*/
+		for(int j=0;j<DIM_MAPPA;j++)
+			if(p->mappa[i][j].terreno==FARO){
+				p->mappa[i][j].stato=RIVELATA;
+				return;
+			}
+}

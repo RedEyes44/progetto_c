@@ -30,7 +30,20 @@ void inizializzaMappa(Partita *p);
 
 void stampaMappa(Partita *p, Naufrago *explorer, int rigaExplorer, int colExplorer, int passiFatti);
 
+/**
+ * 
+ * @brief Imposta lo stato tutte le caselle della mappa a RIVELATA, eccetto quelle già scoperte. Da usare per il menu' trucchi.
+ * @param p Partita a cui fa riferimento la mappa
+ */
 
+void rivelaMappa(Partita *p);
 
+/**
+ * 
+ * @brief Rende visibile la casella del faro. Da usare per il menu' trucchi.
+ * param p Partita a cui fa riferimento la mappa
+ * 
+ */
+void rivelaFaro(Partita *p);
 
 #endif

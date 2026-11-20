@@ -12,6 +12,9 @@ int main() {
 
     inizializzaMappa(&p);
 
+    //rivelaFaro(&p);
+    rivelaMappa(&p);
+
     stampaMappa(&p, NULL, 0, 0, 0);
     return 0;
     
