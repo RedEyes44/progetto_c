@@ -29,4 +29,25 @@ void aggiungiNaufrago(Partita *p);
 */
 void rimuoviNaufrago(Partita *p, int id);
 
+
+/**
+ * @brief Funzione che mostra il menu principale di avvio del gioco, gestendo l'inserimento del morse sos per i trucchi (intanto la metto qua)
+ * @param p Partita, che contiene i dati del gioco da avviare
+ *
+*/
+void menuPrincipale(Partita *p);
+
+/**
+ * @brief Funzione che mostra i nomi di chi ha lavorato al progetto del gioco
+ *
+*/
+void mostraCrediti();
+
+/**
+ * @brief Funzione che dal menu principale permette di mostrare il menu dei trucchi
+ * @param p Partita, che contiene i dati del gioco da avviare
+ *
+*/
+void menuTrucchi(Partita *p);
+
 #endif

@@ -9,6 +9,8 @@ int main() {
     Partita p;
 
     srand(time(NULL));
+    
+    //menuPrincipale(p);
 
     Naufrago test = {1, 10, NULL};
 

@@ -71,3 +71,74 @@ void rimuoviNaufrago(Partita *p, int id){
 	return;
 }
 
+void menuPrincipale(Partita *p){
+	char morse[] = {'.', '.', '.', '-', '-', '-', '.', '.', '.'};  //array che contiene la sequenza di ciò che va digitato per abilitare i trucchi
+	int acc = 0;   //accumulatore per contare l'inserimento della sequenza di caratteri
+	char opz, esci = '3'; 
+	
+	p->trucchi_attivi = false;   //ad inizio partita il flag dei trucchi deve essere settato a false
+	
+	do{
+		
+		//stampa a schermo gli elementi del menu
+		printf("Menu principale del gioco\n");
+		printf("1. Nuova partita\n");
+		printf("2. Crediti");
+		//se non sono ancora stati attivati mostra solo l'esci, altrimenti mostra anche l'accesso ai trucchi
+		if(p->trucchi_attivi == false){
+			printf("3. Esci\n");
+		}else{
+			printf("3. Trucchi\n");
+			printf("4. Esci");
+		}
+		printf("Seleziona una delle opzioni del menu [1 - %c]: ", esci);
+		scanf(" %c", &opz);  //prendo in input il carattere, che può essere il numero da 1 a 3/4 o il carattere della sequenza morse
+		
+		//verifico se il carattere inserito corrisponde all'attuale della sequenza morse o se già si è richiesto i trucchi. Se si incremento il contatore
+		if(p->trucchi_attivi == false){
+			if(opz == morse[acc]){
+				acc++;
+				if(acc == 9){
+					//se il contatore raggiunge il valore 9 abilito la possibilità di usare i trucchi
+					p->trucchi_attivi = true;
+					esci = '4';
+				}
+			}else{
+				//altrimenti lo riporto a 0 e bisogna ripartire con la sequenza
+				acc = 0;
+			}
+		}
+		
+		if(opz == '2'){
+			mostraCrediti();  //chiama la funzione che mostra i nomi di chi ha lavorato al programma
+		}else{
+			if(opz == '3' && opz != 'valido'){
+				menuTrucchi(p);  //chiama la funzione che va ad attivare i trucchi (probabile necessità di modificare l'oggetto partita con altri parametri per i trucchi specifici)
+			}
+		}
+		
+	}while(opz != '1' && opz != esci);
+	
+	if(opz == '1'){
+		//chiamare la funzione che permette di iniziare la partita, con inizializzazione della mappa e a quel punto inizio del gioco effettivo
+	}else if(opz == esci){
+		printf("Uscita dal gioco\n");
+		return; //fine del programma, si è chiesto di uscire
+	}else{
+		exit(1); //qualche errore, esco dal programma
+	}
+	
+}
+
+void mostraCrediti(){
+	//intanto la metto così, quello che va scritto lo determiniamo con calma in un secondo momento
+	printf("CREDITI GIOCO: \n");
+	return;
+}
+
+void menuTrucchi(Partita *p){
+	//firma funzione al momento è solo un segnaposto, seguirà menu effettivo
+	printf("Menu trucchi: ");
+	return;
+}
+
