@@ -50,4 +50,45 @@ void mostraCrediti();
 */
 void menuTrucchi(Partita *p);
 
+/**
+ * @brief Funzione che permette di pulire il buffer dai caratteri in eccesso
+ *
+*/
+void pulisciBuffer();
+
+/**
+ * @brief Funzione che permette di impostare un valore personalizzato dei ps che i naufraghi hanno ad inizio partita
+ * @param p Partita, che contiene i dati del gioco da avviare
+ *
+*/
+void impostaSalute(Partita *p);
+
+/**
+ * @brief Funzione che permette di impostare un numero personalizzato di naufraghi disponibili ad inizio partita
+ * @param p Partita, che contiene i dati del gioco da avviare
+ *
+*/
+void numeroNaufraghi(Partita *p);
+
+/**
+ * @brief Funzione che permette di impostare un numero personalizzato di collezionabili presenti in magazzino ad inizio partita e di avere già le strutture avanzate
+ * @param p Partita, che contiene i dati del gioco da avviare
+ *
+*/
+void impostaMagazzino(Partita *p);
+
+/**
+ * @brief Funzione che permette di rivelare o meno le caselle della mappa gia all'inizio della partita
+ * @param p Partita, che contiene i dati del gioco da avviare
+ *
+*/
+void rivelaCaselle(Partita *p);
+
+/**
+ * @brief Funzione che permette di rendere disponibile sin dal primo turno la missione finale da superare per vincere il gioco
+ * @param p Partita, che contiene i dati del gioco da avviare
+ *
+*/
+void sbloccaMissioneFinale(Partita *p)
+
 #endif

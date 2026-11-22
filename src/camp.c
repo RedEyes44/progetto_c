@@ -137,8 +137,139 @@ void mostraCrediti(){
 }
 
 void menuTrucchi(Partita *p){
-	//firma funzione al momento è solo un segnaposto, seguirà menu effettivo
-	printf("Menu trucchi: ");
+	int opz, value;
+	
+	do{
+		printf("Menu trucchi: \n");
+		printf("1. Imposta i PS iniziali dei naufraghi \n");
+		printf("2. Imposta il numero iniziale dei naufraghi \n");
+		printf("3. Imposta le quantità del magazzino \n");
+		printf("4. Rivela le caselle della mappa di gioco \n");
+		printf("5. Sblocca la missione finale \n");
+		printf("6. Esci \n");
+		printf("Seleziona una delle opzioni del menu [1 - 6]: ");
+		
+		value = scanf(" %d", &opz);
+		
+		//gestione dell'errore di input nel caso di tipo di dato errato
+		if(value != 1){
+			pulisciBuffer();
+			opz = 0; //metto opz a 0 così da forzare la ripetizione del ciclo
+		}
+		
+		if(opz == 1){
+			impostaSalute(p);
+		}else if(opz == 2){
+			numeroNaufraghi(p);
+		}else if(opz == 3){
+			impostaMagazzino(p);
+		}else if(opz == 4){
+			rivelaCaselle(p);
+		}else if(opz == 5){
+			sbloccaMissioneFinale(p);
+		}else if(opz == 6){
+			printf("Uscita dal menu trucchi \n");
+		}else{
+			printf("Input inserito non valido \n");
+		}
+		
+	}while(opz != 6);
+	
+	return;
+}
+
+void pulisciBuffer(){
+	int aus = getchar();
+	while(aus != '\n' && aus != EOF){
+		aus = getchar();
+	}
+	return;	
+}
+
+void impostaSalute(Partita *p){
+	int ps, value;
+	do{
+		printf("Inserisci il numero di ps (> 1) che i naufraghi devono avere di default ad inizio partita: ");
+		value = scanf("%d", &ps);
+		if(value != 1){
+			pulisciBuffer();
+			ps = -1;
+		}
+	}while(ps <= 1);
+	//p->salute_trucco = ps; ulteriore parametro da aggiungere a portita per salvare il valore che l'utente desidera
+	return;
+}
+
+void numeroNaufraghi(Partita *p){
+	int num, value;
+	do{
+		printf("Inserisci il numero di naufraghi (>= 1) che desideri di avere di default ad inizio partita: ");
+		value = scanf("%d", &num);
+		if(value != 1){
+			pulisciBuffer();
+			num = -1;
+		}
+	}while(num < 1);
+	//p->num_naufraghi = ps; ulteriore parametro da aggiungere a portita per salvare il valore che l'utente desidera
+	return;
+}
+
+void impostaMagazzino(Partita *p){
+	int cibo, acqua, legna, corda, rete, cisterna, value;
+	bool flag = false;
+	do{
+		printf("Inserisci nell'ordine la quantità' di oggetti desiderati ad inizio partita: [cibo] [acqua] [legna] [corda] [rete - max 1] [cisterna - max 1]: ");
+		value = scanf("%d %d %d %d %d %d", &cibo, &acqua, &legna, &corda, &rete, &cisterna);
+		if(value == 6 && cibo >= 0 && acqua >= 0 && legna >= 0 && corda >= 0 && (rete == 0 || rete == 1) && (cisterna == 0 || cisterna == 1)){
+			p->magazzino.acqua = acqua;
+			p->magazzino.legna = legna;
+			p->magazzino.corda = corda;
+			p->magazzino.rete = rete;
+			p->magazzino.cisterna = cisterna;
+			p->magazzino.cibo = cibo;
+			flag = true;
+		}else{
+			pulisciBuffer();
+			printf("Errore nell'inserimento dei dati \n");
+		}
+	}while(flag == false);
+	return;
+}
+
+void rivelaCaselle(Partita *p){
+	int attivo, value;
+	do{
+		printf("Inserisci 1 per rivelare le caselle della mappa, 0 per mantenerle nascoste: ");
+		value = scanf("%d", &attivo);
+		if(value != 1){
+			pulisciBuffer();
+			attivo = -1;
+		}
+	}while(attivo != 0 && attivo != 1);
+	//p->mostra_caselle = attivo; ulteriore flag per salvare la scelta dell'utente
+	return;
+}
+
+void sbloccaMissioneFinale(Partita *p){
+	int attivo, value;
+	do{
+		printf("Inserisci 1 per sbloccare la missione finale, 0 per lasciarla da sbloccare: ");
+		value = scanf("%d", &attivo);
+		if(value != 1){
+			pulisciBuffer();
+			attivo = -1;
+		}
+	}while(attivo != 0 && attivo != 1);
+	
+	if(attivo == 1){
+		p->magazzino.lente = true;
+		p->magazzino.olio = true;
+		p->magazzino.chiave = true;
+	}else{
+		p->magazzino.lente = false;
+		p->magazzino.olio = false;
+		p->magazzino.chiave = false;
+	}
 	return;
 }
 
