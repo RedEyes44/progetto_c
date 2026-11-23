@@ -98,7 +98,7 @@ void piazzaTana(Partita *p){
 		rigaTana = rand()%7+1;
 		colonnaTana = rand()%7+1;
 
-	}while(abs(rigaTana-CENTRO_MAPPA) + abs(colonnaTana-CENTRO_MAPPA)<3 || p->mappa[rigaTana][colonnaTana].terreno==GROTTA);
+	}while(abs(rigaTana-CENTRO_MAPPA) + abs(colonnaTana-CENTRO_MAPPA)<3 || p->mappa[rigaTana][colonnaTana].terreno==GROTTA); /*abs fa il modulo assoluto di quello che c'è tra parentesi*/
 
 	p->mappa[rigaTana][colonnaTana].terreno = TANA;
 
