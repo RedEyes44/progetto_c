@@ -10,13 +10,32 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+void inizializzaPartita(Partita *p){
+	p->giorno_corrente = 1;                       //imposto a 1 il giorno corrente
+	p->count_id_naufraghi = 1;                    //imposto a 1 il contatore dei naufraghi, mi serve per dopo
+	p->squadra = NULL;                            //imposto a NULL il puntatore della lista
+	p->missione_finale = false;                   //imposto a false il flag per la missione finale
+	p->num_naufraghi_iniziale = 4;                //imposto al default 4 il numero di naufraghi iniziale
+	p->salute_naufraghi_iniziale = MAX_SALUTE;    //imposto al default MAX_SAlUTE la salute iniziale dei naufraghi
+	p->sorgente = false;                          //imposto a false il flag della scoperta della sorgente
+	p->magazzino->cisterna = false;               //imposto a false il flag della costruzione della cisterna
+	p->trucchi_attivi = false;                    //imposto a false il flag dei trucchi attivi
+	p->trucco_mostra_caselle = false;             //imposto a false il flag del trucco mostra caselle
+	p->magazzino->chiave = false;                 //imposto a false i flag dell'acquisizione dei materiali della missione finale, ovvero chiave, lente e olio
+	p->magazzino->lente = false;
+	p->magazzino->olio = false;
+	p->magazzino->rete = false;                  //imposto a false il flag della costruzione della rete
+	p->magazzino->acqua = 8;                     //imposto al valore di default l'equipaggiamento del magazzino,, ovvero 8 unità di acqua e cibo e 0 unità di corda e legna
+	p->magazzino->cibo = 8;
+	p->magazzino->corda = 0;
+	p->magazzino->legna = 0;
+}
+
 void inizializzaLista(Partita *p){
 	int i;
 	
-	p->count_id_naufraghi = 1;        //inizializzo ad 1 il contatore dei naufraghi
-	
-	for(i = 0; i < 4; i++){
-		aggiungiNaufrago(p);          //ciclo per quattro volte per aggiungere i quattro naufraghi di partenza
+	for(i = 0; i < p->num_naufraghi_iniziale; i++){
+		aggiungiNaufrago(p);          //ciclo per  per aggiungere i naufraghi di partenza
 	}
 	
 	return;
@@ -71,7 +90,16 @@ void rimuoviNaufrago(Partita *p, int id){
 	return;
 }
 
-void menuPrincipale(Partita *p){
+void liberaLista(Partita *p){
+    Naufrago *aus;
+    while(p->squadra != NULL){
+        aus = p->squadra;          //mantengo il nodo della lista attuale
+        p->squadra = aus->next;    //vado a impostare come nuova testa della lista il successivo elemento. Se il vecchio primo era l'ultimo, ora la testa punta a NULL
+        free(aus);                 //libero la memoria dell'elemento da eliminare
+    }
+}
+
+bool menuPrincipale(Partita *p){
 	char morse[] = {'.', '.', '.', '-', '-', '-', '.', '.', '.'};  //array che contiene la sequenza di ciò che va digitato per abilitare i trucchi
 	int acc = 0;   //accumulatore per contare l'inserimento della sequenza di caratteri
 	char opz, esci = '3'; 
@@ -83,13 +111,13 @@ void menuPrincipale(Partita *p){
 		//stampa a schermo gli elementi del menu
 		printf("Menu principale del gioco\n");
 		printf("1. Nuova partita\n");
-		printf("2. Crediti");
+		printf("2. Crediti\n");
 		//se non sono ancora stati attivati mostra solo l'esci, altrimenti mostra anche l'accesso ai trucchi
 		if(p->trucchi_attivi == false){
 			printf("3. Esci\n");
 		}else{
 			printf("3. Trucchi\n");
-			printf("4. Esci");
+			printf("4. Esci\n");
 		}
 		printf("Seleziona una delle opzioni del menu [1 - %c]: ", esci);
 		scanf(" %c", &opz);  //prendo in input il carattere, che può essere il numero da 1 a 3/4 o il carattere della sequenza morse
@@ -112,7 +140,7 @@ void menuPrincipale(Partita *p){
 		if(opz == '2'){
 			mostraCrediti();  //chiama la funzione che mostra i nomi di chi ha lavorato al programma
 		}else{
-			if(opz == '3' && opz != 'valido'){
+			if(opz == '3' && opz != esci){
 				menuTrucchi(p);  //chiama la funzione che va ad attivare i trucchi (probabile necessità di modificare l'oggetto partita con altri parametri per i trucchi specifici)
 			}
 		}
@@ -120,10 +148,10 @@ void menuPrincipale(Partita *p){
 	}while(opz != '1' && opz != esci);
 	
 	if(opz == '1'){
-		//chiamare la funzione che permette di iniziare la partita, con inizializzazione della mappa e a quel punto inizio del gioco effettivo
+		return true;
 	}else if(opz == esci){
 		printf("Uscita dal gioco\n");
-		return; //fine del programma, si è chiesto di uscire
+		return false;    //fine del programma, si è chiesto di uscire
 	}else{
 		exit(1); //qualche errore, esco dal programma
 	}
@@ -158,30 +186,37 @@ void menuTrucchi(Partita *p){
 		}
 		
 		if(opz == 1){
+			//chiamo la funzione che permette di impostare i ps iniziali dei naufraghi
 			impostaSalute(p);
 		}else if(opz == 2){
+			//chiamo la funzione che permette di impostare il numero iniziale di naufraghi
 			numeroNaufraghi(p);
 		}else if(opz == 3){
+			//chiamo la funzione che permette di impostare la quantità iniziale dell'equipaggiamento
 			impostaMagazzino(p);
 		}else if(opz == 4){
+			//chiamo la funzione che permette di impostare la rivelazione o meno delle caselle della mappa ad inizio partita
 			rivelaCaselle(p);
 		}else if(opz == 5){
+			//chiamo la funzione che permette di impostare come disponibile da subito o meno la missione finale
 			sbloccaMissioneFinale(p);
 		}else if(opz == 6){
+			//esco dal menu trucchi
 			printf("Uscita dal menu trucchi \n");
 		}else{
+			//input inserito non valido: avviso l'utente con un messaggio
 			printf("Input inserito non valido \n");
 		}
 		
 	}while(opz != 6);
-	
+	//se opz = 6 vuol dire che l'utente desidera uscire dal menu trucchi, quindi termina l'esecuzione della funzione	
 	return;
 }
 
 void pulisciBuffer(){
 	int aus = getchar();
 	while(aus != '\n' && aus != EOF){
-		aus = getchar();
+		aus = getchar();  //ciclo man mano i caratteri salvati nel buffer, così da eliminare quello che non interessa e che può risultare dannoso per l'esecuzione del programma
 	}
 	return;	
 }
@@ -196,7 +231,8 @@ void impostaSalute(Partita *p){
 			ps = -1;
 		}
 	}while(ps <= 1);
-	//p->salute_trucco = ps; ulteriore parametro da aggiungere a portita per salvare il valore che l'utente desidera
+	//assegno come valore iniziale dei ps dei miei naufraghi quello scelto dall'utente
+	p->salute_naufraghi_iniziale = ps;
 	return;
 }
 
@@ -210,7 +246,8 @@ void numeroNaufraghi(Partita *p){
 			num = -1;
 		}
 	}while(num < 1);
-	//p->num_naufraghi = ps; ulteriore parametro da aggiungere a portita per salvare il valore che l'utente desidera
+	//assegno come valore iniziale del numero dei miei naufraghi quello scelto dall'utente
+	p->num_naufraghi_iniziale = num;
 	return;
 }
 
@@ -221,14 +258,17 @@ void impostaMagazzino(Partita *p){
 		printf("Inserisci nell'ordine la quantità' di oggetti desiderati ad inizio partita: [cibo] [acqua] [legna] [corda] [rete - max 1] [cisterna - max 1]: ");
 		value = scanf("%d %d %d %d %d %d", &cibo, &acqua, &legna, &corda, &rete, &cisterna);
 		if(value == 6 && cibo >= 0 && acqua >= 0 && legna >= 0 && corda >= 0 && (rete == 0 || rete == 1) && (cisterna == 0 || cisterna == 1)){
+			//se l'utente ha inserito come richiesto i valori per i materiali dell'inventario, li si imposta 
 			p->magazzino.acqua = acqua;
 			p->magazzino.legna = legna;
 			p->magazzino.corda = corda;
 			p->magazzino.rete = rete;
 			p->magazzino.cisterna = cisterna;
 			p->magazzino.cibo = cibo;
+			printf("Impostazione dei valori avvenuta con successo. Si ritorna al menu dei trucchi \n");
 			flag = true;
 		}else{
+			//altrimenti pulisco il buffer e si fa riprovare l'utente
 			pulisciBuffer();
 			printf("Errore nell'inserimento dei dati \n");
 		}
@@ -246,7 +286,8 @@ void rivelaCaselle(Partita *p){
 			attivo = -1;
 		}
 	}while(attivo != 0 && attivo != 1);
-	//p->mostra_caselle = attivo; ulteriore flag per salvare la scelta dell'utente
+	//salvo la scelta dell'utente riguardo alla volontò di rivelare o meno all'inizio della partita le caselle della mappa
+	p->trucco_mostra_caselle = attivo; 
 	return;
 }
 
@@ -262,13 +303,17 @@ void sbloccaMissioneFinale(Partita *p){
 	}while(attivo != 0 && attivo != 1);
 	
 	if(attivo == 1){
+		//se l'utente ha scelto di rendere disponibile sin da subito la missione finale rendo disponibile i materiali necessari nell'inventario e attivo il flag dedicato
 		p->magazzino.lente = true;
 		p->magazzino.olio = true;
 		p->magazzino.chiave = true;
+		p->missione_finale = true;
 	}else{
+		//altrimenti si riporta alla situazione normale, ovvero che la missione va sbloccata giocando col passare dei turni
 		p->magazzino.lente = false;
 		p->magazzino.olio = false;
 		p->magazzino.chiave = false;
+		p->missione_finale = false;
 	}
 	return;
 }

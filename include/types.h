@@ -114,7 +114,15 @@ typedef struct Partita{
 
 	int codice_faro[DIM_CODICE_FARO];  /**< Array con le 4 cifre del codice del faro */
 
-	bool trucchi_attivi;  /**< Flag per i trucchi */
+	bool trucchi_attivi;  /**< Flag generico per i trucchi */
+	
+	bool trucco_mostra_caselle; /**< Flag per indicare se è attivo il trucco di rivelare le caselle */
+	
+	bool missione_finale; /**< Flag per indicare se è disponibile la missione finale. Di default è falso, può diventare vero dall'inizio grazie ai trucchi */
+	
+	int num_naufraghi_iniziale; /**< Numero iniziale di naufraghi presenti, di default 4, cambia se ci sono i trucchi */
+	
+	int salute_naufraghi_iniziale; /**< Numero iniziale dei ps dei naufraghi. Di default 10, può cambiare con i trucchi */
 
 
 }Partita;

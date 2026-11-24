@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "types.h"
 #include "map.h"
+#include "camp.h"
 
 int main() {
 
@@ -10,13 +11,14 @@ int main() {
 
     srand(time(NULL));
     
-    //menuPrincipale(p);
 
     Naufrago test = {1, 10, NULL};
-
-    p.giorno_corrente = 1;
+    inizializzaPartita(p);
+    //p.giorno_corrente = 1;
 
     inizializzaMappa(&p);
+    
+    //start = menuPrincipale(p);
 
     gestisciSpedizione(&p, &test);
 
