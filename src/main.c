@@ -10,7 +10,7 @@ int main() {
 
     srand(time(NULL));
     
-    //menuPrincipale(p);
+    //menuPrincipale(&p);
 
     Naufrago test = {1, 10, NULL};
 

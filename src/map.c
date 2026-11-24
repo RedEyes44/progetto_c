@@ -209,10 +209,10 @@ void inizializzaMappa(Partita *p){
 
 char carattereCasella(Casella c){
 
-	char carattere;
+	char carattere = '?';
 
 	if(c.stato==NASCOSTA)
-		return '?';
+		return carattere;
 	else{
 
 		if(c.terreno==ACCAMPAMENTO)
@@ -460,7 +460,7 @@ bool gestisciSpedizione(Partita *p, Naufrago *explorer){
 
 					if(explorer->salute<=0){
 						printf("Il naufrago è morto..\n");
-						/* rimuoviNaufrago(p, explorer->id); */
+						rimuoviNaufrago(p, explorer->id);
 						return false;
 					}
 				}
