@@ -116,15 +116,15 @@ typedef struct Partita{
 
 	bool trucchi_attivi;  /**< Flag generico per i trucchi */
 	
-	bool trucco_mostra_caselle; /**< Flag per indicare se è attivo il trucco di rivelare le caselle */
+	bool trucco_mostra_caselle; /**< Flag per indicare se Ã¨ attivo il trucco di rivelare le caselle */
 	
-	bool missione_finale; /**< Flag per indicare se è disponibile la missione finale. Di default è falso, può diventare vero dall'inizio grazie ai trucchi */
+	bool missione_finale; /**< Flag per indicare se Ã¨ disponibile la missione finale. Di default Ã¨ falso, puÃ² diventare vero dall'inizio grazie ai trucchi */
 	
 	int num_naufraghi_iniziale; /**< Numero iniziale di naufraghi presenti, di default 4, cambia se ci sono i trucchi */
 	
-	int salute_naufraghi_iniziale; /**< Numero iniziale dei ps dei naufraghi. Di default 10, può cambiare con i trucchi */
+	int salute_naufraghi_iniziale; /**< Numero iniziale dei ps dei naufraghi. Di default 10, puÃ² cambiare con i trucchi */
 	
-	bool vittoria; /**< Flag per indicare se la partita è stata vinta, di default false, diventa true in caso di vittoria */
+	bool vittoria; /**< Flag per indicare se la partita Ã¨ stata vinta, di default false, diventa true in caso di vittoria */
 
 
 }Partita;

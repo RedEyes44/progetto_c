@@ -9,20 +9,42 @@
 #include "utils.h"
 #include "camp.h"
 #include "events.h"
-#include <time.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
+
+
+
+/**
+ * @brief Controlla se due caselle stanno nello stesso bordo della mappa
+ * @param r1 Riga della prima casella
+ * @param c1 Colonna della prima casella
+ * @param r2 Riga della seconda casella
+ * @param c2 Colonna della seconda casella
+ * @return True se le caselle stanno nello stesso bordo, altrimenti False
+ * 
+ */
+
+bool stessoBordo(int r1, int c1, int r2, int c2){
+
+	if(r1==0 && r2==0) return true;
+	if(r1==DIM_MAPPA-1 && r2==DIM_MAPPA-1) return true;
+	if(c1==0 && c2==0) return true;
+	if(c1==DIM_MAPPA-1 && c2==DIM_MAPPA-1) return true;
+
+	return false;
+
+}
 
 /**
  * @brief Cambia il terreno di una casella scelta casualmente in RELITTO, controllando che sia nella spiaggia
  * @param p Partita a cui fa riferimento la mappa
- * 
+ * @param row Riga del relitto
+ * @param col Colonna del relitto
 */
 
-void piazzaRelitto(Partita *p){
-
+void piazzaRelitto(Partita *p, int *row, int *col){ /* row e col servono per tenere traccia della posizione del relitto*/
+                                                    /*In questo modo, la piazziaFaro saprà dove si trova il relitto e potrà essere piazzato in un bordo della mappa diverso*/  
 
 	int rigaRelitto, colonnaRelitto;
 
@@ -35,6 +57,9 @@ void piazzaRelitto(Partita *p){
 
 	p->mappa[rigaRelitto][colonnaRelitto].terreno = RELITTO;
 
+	*row = rigaRelitto;
+	*col = colonnaRelitto;
+
 
 }
 
@@ -42,10 +67,11 @@ void piazzaRelitto(Partita *p){
 /**
  * @brief Cambia il terreno di una casella scelta casualmente in FARO, controllando che sia nella spiaggia
  * @param p Partita a cui fa riferimento la mappa
- * 
+ * @param row Riga del Relitto
+ * @param col Colonna del Relitto
 */
 
-void piazzaFaro(Partita *p){
+void piazzaFaro(Partita *p, int row, int col){
 
 	int rigaFaro, colonnaFaro;
 
@@ -54,7 +80,7 @@ void piazzaFaro(Partita *p){
 		rigaFaro = rand()%DIM_MAPPA;
 		colonnaFaro = rand()%DIM_MAPPA;
 
-	}while(p->mappa[rigaFaro][colonnaFaro].terreno!=SPIAGGIA);
+	}while(p->mappa[rigaFaro][colonnaFaro].terreno!=SPIAGGIA || stessoBordo(row, col, rigaFaro, colonnaFaro));
 
 	p->mappa[rigaFaro][colonnaFaro].terreno = FARO;
 
@@ -73,8 +99,8 @@ void piazzaGrotta(Partita *p){
 
 	do{
 
-		rigaGrotta = rand()%7+1;
-		colonnaGrotta = rand()%7+1;
+		rigaGrotta = rand()%(DIM_MAPPA-2)+1;
+		colonnaGrotta = rand()%(DIM_MAPPA-2)+1;
 
 	}while(abs(rigaGrotta-CENTRO_MAPPA) + abs(colonnaGrotta-CENTRO_MAPPA) < 3);
 
@@ -95,8 +121,8 @@ void piazzaTana(Partita *p){
 
 	do{
 
-		rigaTana = rand()%7+1;
-		colonnaTana = rand()%7+1;
+		rigaTana = rand()%(DIM_MAPPA-2)+1;
+		colonnaTana = rand()%(DIM_MAPPA-2)+1;
 
 	}while(abs(rigaTana-CENTRO_MAPPA) + abs(colonnaTana-CENTRO_MAPPA)<3 || p->mappa[rigaTana][colonnaTana].terreno==GROTTA); /*abs fa il modulo assoluto di quello che c'è tra parentesi*/
 
@@ -137,8 +163,8 @@ void piazzaSorgente(Partita *p){
 
 	do{
 
-		rigaSorgente = rand()%7+1;
-		colonnaSorgente = rand()%7+1;
+		rigaSorgente = rand()%(DIM_MAPPA-2)+1;
+		colonnaSorgente = rand()%(DIM_MAPPA-2)+1;
 
 		terreno = p->mappa[rigaSorgente][colonnaSorgente].terreno;
 
@@ -162,7 +188,7 @@ void inizializzaMappa(Partita *p){
 				p->mappa[r][c].terreno = ACCAMPAMENTO;
 			}else{                                   /* Altrimenti, si procederà con gli altri casi*/
 
-				if(r==0 || c==0 || r==8 || c==8){    /* Se la cella si trova sul bordo, verrà settata come SPIAGGIA e, ovviamente, come NASCOSTA */
+				if(r==0 || c==0 || r==DIM_MAPPA-1 || c==DIM_MAPPA-1){    /* Se la cella si trova sul bordo, verrà settata come SPIAGGIA e, ovviamente, come NASCOSTA */
 					p->mappa[r][c].stato = NASCOSTA;
 					p->mappa[r][c].terreno = SPIAGGIA;
 				}else{
@@ -188,8 +214,11 @@ void inizializzaMappa(Partita *p){
 			}
 		}
 
-	piazzaRelitto(p); /* Attraverso le rispettive funzioni, si settano i luoghi speciali */
-	piazzaFaro(p);
+	int row, col;  /* Variabili d'appoggio per le coordinate del Relitto*/
+
+	piazzaRelitto(p, &row, &col); /* Attraverso le rispettive funzioni, si settano i luoghi speciali */
+		                          /*Alla piazzaRelitto vengono passati gli indirizzi delle variabili d'appoggio, per popolarle*/
+	piazzaFaro(p, row, col);      /*Una volta popolate le variabili con le coordinate del relitto, esse vengono passate alla piazzaFaro, così che i due luoghi si trovino in bordi diversi della mappa*/
 	piazzaGrotta(p);
 	piazzaTana(p);
 
@@ -269,7 +298,7 @@ void stampaMappa(Partita *p, Naufrago *explorer, int rigaExplorer, int colExplor
 	printf("  0 1 2 3 4 5 6 7 8\n");      /* Numerazione delle colonne*/
 
 	for(int i=0;i<DIM_MAPPA;i++){
-		printf("%d ", i);   /* Numerazione di ogni colonna */
+		printf("%d ", i);   /* Numerazione di ogni riga */
 		for(int j=0;j<DIM_MAPPA;j++){
 			if(explorer!=NULL && rigaExplorer==i && colExplorer==j){	/* Se c'è l'esploratore in missione e viene trovato, si stampa il carattere relativo */
 					printf("# ");
@@ -304,9 +333,11 @@ void rivelaFaro(Partita *p){
 
 	for(int i=0;i<DIM_MAPPA;i++)    /* Scorre tutte le caselle della mappa. Se la casella corrente corrisponde al faro ed è nascosta, la rivela e termina la funzione con return*/
 		for(int j=0;j<DIM_MAPPA;j++)
-			if(p->mappa[i][j].terreno==FARO && p->mappa[i][j].stato == NASCOSTA){
-				p->mappa[i][j].stato=RIVELATA;
-				return;
+			if(p->mappa[i][j].terreno==FARO){
+				if(p->mappa[i][j].stato == NASCOSTA){
+					p->mappa[i][j].stato=RIVELATA;
+					return;
+				}
 			}
 }
 
@@ -328,6 +359,28 @@ void rivelaCollina(Partita *p, int r, int c){
 }
 
 /**
+ * @brief Serve a controllare i sentieri effetivamente attraversati
+ * @param p Partita a cui fa riferimento la mappa
+ * @param riga Riga attuale
+ * @param col Colonna attuale
+ * @param mat Matrice booleana di supporto
+ */
+
+void supportoSentiero(Partita *p, int riga, int col, bool mat[][DIM_MAPPA]){
+
+	if(riga<0 || col<0 || riga>=DIM_MAPPA || col>=DIM_MAPPA || mat[riga][col] || p->mappa[riga][col].terreno!=SENTIERO) return;
+
+	mat[riga][col] = true;
+
+	if(p->mappa[riga][col].stato==NASCOSTA) p->mappa[riga][col].stato=RIVELATA;
+
+	supportoSentiero(p, riga-1, col, mat);
+	supportoSentiero(p, riga+1, col, mat);
+	supportoSentiero(p, riga, col-1, mat);
+	supportoSentiero(p, riga, col+1, mat);
+}
+
+/**
  * @brief Rivela tutte le caselle di un sentiero ricorsivamente
  * @param p Partita a cui fa riferimento la mappa
  * @param r Riga di partenza del sentiero
@@ -336,27 +389,29 @@ void rivelaCollina(Partita *p, int r, int c){
  * 
  */
 
-void rivelaSentiero(Partita *p, int r, int c){  /* Si basa su 4 if separato, uno per direzione di espansione */
+void rivelaSentiero(Partita *p, int r, int c){  
 
-	if((r-1)>=0 && p->mappa[r-1][c].terreno==SENTIERO && p->mappa[r-1][c].stato==NASCOSTA){ /*Controlla e aggiorna la casella appena sopra*/
+	bool mat[DIM_MAPPA][DIM_MAPPA] = {false};
+	supportoSentiero(p, r, c, mat);
+	/*if((r-1)>=0 && p->mappa[r-1][c].terreno==SENTIERO && p->mappa[r-1][c].stato==NASCOSTA){ //Controlla e aggiorna la casella appena sopra
 		p->mappa[r-1][c].stato=RIVELATA;
-		rivelaSentiero(p,r-1,c);   /* E poi "continua" lungo il sentiero */
+		rivelaSentiero(p,r-1,c);   // E poi "continua" lungo il sentiero 
 	}
 
-	if((r+1)<DIM_MAPPA && p->mappa[r+1][c].terreno==SENTIERO && p->mappa[r+1][c].stato==NASCOSTA){ /*Controlla e aggiorna la casella appena sotto*/
+	if((r+1)<DIM_MAPPA && p->mappa[r+1][c].terreno==SENTIERO && p->mappa[r+1][c].stato==NASCOSTA){ //Controlla e aggiorna la casella appena sotto
 		p->mappa[r+1][c].stato=RIVELATA;
-		rivelaSentiero(p,r+1,c); /* E poi "continua" lungo il sentiero */
+		rivelaSentiero(p,r+1,c); // E poi "continua" lungo il sentiero 
 	}
 
-	if((c-1)>=0 && p->mappa[r][c-1].terreno==SENTIERO && p->mappa[r][c-1].stato==NASCOSTA){ /*Controlla e aggiorna la casella appena a sinistra*/
+	if((c-1)>=0 && p->mappa[r][c-1].terreno==SENTIERO && p->mappa[r][c-1].stato==NASCOSTA){ //Controlla e aggiorna la casella appena a sinistra
 		p->mappa[r][c-1].stato=RIVELATA;
-		rivelaSentiero(p,r,c-1); /* E poi "continua" lungo il sentiero */
+		rivelaSentiero(p,r,c-1); // E poi "continua" lungo il sentiero 
 	}
 
-	if((c+1)<DIM_MAPPA && p->mappa[r][c+1].terreno==SENTIERO && p->mappa[r][c+1].stato==NASCOSTA){ /*Controlla e aggiorna la casella appena a destra*/
+	if((c+1)<DIM_MAPPA && p->mappa[r][c+1].terreno==SENTIERO && p->mappa[r][c+1].stato==NASCOSTA){ //Controlla e aggiorna la casella appena a destra
 		p->mappa[r][c+1].stato=RIVELATA;
-		rivelaSentiero(p,r,c+1); /* E poi "continua" lungo il sentiero */
-	}
+		rivelaSentiero(p,r,c+1); // E poi "continua" lungo il sentiero
+	}*/
 
 }
 
@@ -456,7 +511,9 @@ bool gestisciSpedizione(Partita *p, Naufrago *explorer){
 					printf("Evento del Membro C su questa casella!\n");  //!!
 
 
-					/* if (gestisciEvento(p, explorer, pos)) return true; */
+					/* if (gestisciEvento(p, explorer, pos)){ 
+							p->vittoria = true;
+							return true; }*/
 
 					if(explorer->salute<=0){
 						printf("Il naufrago è morto..\n");

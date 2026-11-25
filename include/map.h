@@ -24,7 +24,7 @@ void inizializzaMappa(Partita *p);
  * @param explorer Puntatore all'eventuale naufrago in esplorazione
  * @param rigaExplorer Riga della matrice su cui si trova attualmente l'eventuale Explorer
  * @param colExplorer Colonna della matrice su cui si trova attualmente l'eventuale Explorer
- * @param passiFatti Numero di passi fatta dall'eventuale Explorer
+ * @param passiFatti Numero di passi fatti dall'eventuale Explorer
  * 
 */
 
@@ -32,7 +32,7 @@ void stampaMappa(Partita *p, Naufrago *explorer, int rigaExplorer, int colExplor
 
 /**
  * 
- * @brief Imposta lo stato tutte le caselle della mappa a RIVELATA, eccetto quelle già scoperte. Da usare per il menu' trucchi.
+ * @brief Imposta lo stato di tutte le caselle della mappa a RIVELATA, eccetto quelle già scoperte. Da usare per il menu' trucchi.
  * @param p Partita a cui fa riferimento la mappa
  */
 
@@ -49,7 +49,7 @@ void rivelaFaro(Partita *p);
 /**
  * 
  * @brief Fa muovere il simbolo del naufrago in spedizione (#) dopo aver letto il comando da tastiera (w,a,s,d o r).
- * @brief Inoltre, aggiorna i passi fatti e cambia lo stato delle caselle calpestate in VISITATA, e gestisce direttamente COLLINA, SENTIERO E SORGENTE
+ * @details Inoltre, aggiorna i passi fatti e cambia lo stato delle caselle calpestate in VISITATA, e gestisce direttamente COLLINA, SENTIERO E SORGENTE
  * @param p Partita a cui fa riferimento la mappa
  * @param explorer Puntatore al naufrago in spedizione
  * @return true solo se il giocatore vince al faro, false in tutti gli altri casi
