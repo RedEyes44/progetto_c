@@ -24,11 +24,12 @@ void inizializzaPartita(Partita *p){
 	p->magazzino->chiave = false;                 //imposto a false i flag dell'acquisizione dei materiali della missione finale, ovvero chiave, lente e olio
 	p->magazzino->lente = false;
 	p->magazzino->olio = false;
-	p->magazzino->rete = false;                  //imposto a false il flag della costruzione della rete
-	p->magazzino->acqua = 8;                     //imposto al valore di default l'equipaggiamento del magazzino,, ovvero 8 unità di acqua e cibo e 0 unità di corda e legna
+	p->magazzino->rete = false;                   //imposto a false il flag della costruzione della rete
+	p->magazzino->acqua = 8;                      //imposto al valore di default l'equipaggiamento del magazzino,, ovvero 8 unità di acqua e cibo e 0 unità di corda e legna
 	p->magazzino->cibo = 8;
 	p->magazzino->corda = 0;
 	p->magazzino->legna = 0;
+	p->vittoria = false;                          //imposto a false il flag di stato della partita. Vuol dire che non si ha ancora vinto
 }
 
 void inizializzaLista(Partita *p){
@@ -213,6 +214,83 @@ void menuTrucchi(Partita *p){
 	return;
 }
 
+void menuAccampamento(Partita *p){
+	int opz, value; char sicuro;
+	
+	do{
+		printf("Menu dell'accampamento: \n");
+		printf("1. Intraprendi una spedizione \n");
+		printf("2. Raccogli risorse nelle vicinanze \n");
+		printf("3. Riposa \n");
+		printf("4. Magazzino, squadra e stato partita \n");
+		printf("5. Laboratorio \n");
+		printf("6. Esci \n");
+		printf("Seleziona una delle opzioni del menu [1 - 6]: ");
+		
+		value = scanf(" %d", &opz);
+		pulisciBuffer();
+		
+		//gestione dell'errore di input nel caso di tipo di dato errato
+		if(value != 1){
+			opz = 0; //metto opz a 0 così da forzare la ripetizione del ciclo
+		}
+		
+		if(opz == 1){
+			//chiamo la funzione che permette di intraprendere una spedizione, non credo sia mia
+			//intraprendiSpedizione(p);
+			//chiamo la funzione che permette di procedere con la nuova giornata calcolando il nuovo valore dell'equipaggiamento e lo stato dei naufraghi
+			faseSera(p);
+			printf("Giornata corrente terminata \n");
+		}else if(opz == 2){
+			//chiamo la funzione che permette di raccogliere risorse nelle vicinanze dell'accampamento
+			//raccogliRisorse(p);
+			//chiamo la funzione che permette di procedere con la nuova giornata calcolando il nuovo valore dell'equipaggiamento e lo stato dei naufraghi
+			faseSera(p);
+			printf("Giornata corrente terminata \n");
+		}else if(opz == 3){
+			//chiamo la funzione che permette di far riposare i miei naufraghi
+			//riposoNaufraghi(p);
+			//chiamo la funzione che permette di procedere con la nuova giornata calcolando il nuovo valore dell'equipaggiamento e lo stato dei naufraghi
+			faseSera(p);
+			printf("Giornata corrente terminata \n");
+		}else if(opz == 4){
+			//chiamo la funzione che permette di visualizzare lo stato della partita, dei naufraghi, del magazzino e dell'equipaggiamento
+			visualizzaStato(p);
+		}else if(opz == 5){
+			//chiamo la funzione che permette di accedere al laboratorio per costruire equipaggiamento
+			laboratorio(p);
+		}else if(opz == 6){
+			do{
+				printf("Sei sicuro di voler uscire? Cosi' perderai tutti i progressi della partita. \nInserisci S per confermare la scelta, N per continuare la partita: ");
+				scanf(" %c", &sicuro);
+				pulisciBuffer();
+				if(sicuro != 'S' && sicuro != 'N'){
+					printf("Input inserito non valido \n");
+				}
+			}while(sicuro != 'S' && sicuro != 'N');
+			if(sicuro == 'N'){
+				opz = 0;
+			}else{
+				printf("Fine partita. Ritorno al menu principale \n");
+			}
+		}else{
+			//input inserito non valido: avviso l'utente con un messaggio
+			printf("Input inserito non valido \n");
+		}
+		
+	}while(opz != 6 && p->giorno_corrente <= 30 && p->vittoria == false && p->squadra != NULL);
+	//se la condizione non è più valida vuol dire che la partita, nel bene o nel male, è terminata. Si avvisa l'utente su come è finita. In ogni caso libero la lista
+	if(p->giorno_corrente > 30){
+		printf("E' arrivato l'uragano e i naufraghi non sono sopravvissuti. Game Over. \n");
+	}else if(p->vittoria == true){
+		printf("Congratulazioni, hai vinto. Il faro e' stato riacceso e i naufraghi sono in salvo! \n");
+	}else if(p->squadra == NULL){
+		printf("Tutti i naufraghi sono morti. Game Over. \n");
+	}
+	liberaLista(p);	
+	return;
+}
+
 void pulisciBuffer(){
 	int aus = getchar();
 	while(aus != '\n' && aus != EOF){
@@ -314,6 +392,51 @@ void sbloccaMissioneFinale(Partita *p){
 		p->magazzino.olio = false;
 		p->magazzino.chiave = false;
 		p->missione_finale = false;
+	}
+	return;
+}
+
+
+void faseSera(Partita *p){
+	//prima di tutto verifico se sorgente e rete sono presenti. Se si, aggijngo un'unità di acqua e di cibo, altrimenti non succede nulla
+	if(p->sorgente == true){
+		p->magazzino.acqua++;
+	}
+	if(p->magazzino.rete == true){
+		p->magazzino.cibo++;
+	}
+	//inizializzo i miei due puntatori ausiliari per scorrere la lista dei naufraghi
+	Naufrago *aus = p->squadra; 
+	Naufrago *aus2 = NULL;
+	while(aus != NULL){
+		//se in magazzino c'è acqua per il naufrago, egli la beve, quindi si decrementa di uno la quantità. Altrimenti il naufrago perde 2 ps
+		if(p->magazzino.acqua > 0){
+			p->magazzino.acqua--;
+		}else{
+			aus->salute = aus->salute - 2;
+		}
+		//se il naufrago è ancora vivo faccio lo stesso controllo con il cibo e agisco nello stesso modo
+		if(aus->salute > 0){
+			if(p->magazzino.cibo > 0){
+				p->magazzino.cibo--;
+			}else{
+				aus->salute = aus->salute - 2;
+			}
+		}
+		//se il naufrago non supera la notte visto che non ha ps a sufficienza avviso l'utente della scomparsa e libero la sua cella in memoria.
+		//in ogni caso si passa o per l'aggiornamento della lista con la funzione rimuoviNaufrago o esplicitamente al naufrago successivo
+		if(aus->salute <= 0){
+			aus2 = aus->next;
+			printf("Il naufrago %d non ha superato la notte ed e' morto... \n", aus->id);
+			rimuoviNaufrago(p, aus->id);
+			aus = aus2;
+		}else{
+			aus = aus->next;
+		}
+	}
+	//se la squadra ha almeno un'unitò incremento il contatore dei giorni e si passa alla giornata successiva
+	if(p->squadra != NULL){
+		p->giorno_corrente++;
 	}
 	return;
 }

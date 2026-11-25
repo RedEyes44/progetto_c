@@ -123,6 +123,8 @@ typedef struct Partita{
 	int num_naufraghi_iniziale; /**< Numero iniziale di naufraghi presenti, di default 4, cambia se ci sono i trucchi */
 	
 	int salute_naufraghi_iniziale; /**< Numero iniziale dei ps dei naufraghi. Di default 10, può cambiare con i trucchi */
+	
+	bool vittoria; /**< Flag per indicare se la partita è stata vinta, di default false, diventa true in caso di vittoria */
 
 
 }Partita;

@@ -66,6 +66,13 @@ void mostraCrediti();
 void menuTrucchi(Partita *p);
 
 /**
+ * @brief Funzione che permette di poter intraprendere le azioni della partita
+ * @param p Partita, che contiene i dati della partita corrente
+ *
+*/
+void menuAccampamento(Partita *p);
+
+/**
  * @brief Funzione che permette di pulire il buffer dai caratteri in eccesso
  *
 */
