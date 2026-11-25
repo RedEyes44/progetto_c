@@ -7,6 +7,15 @@
 #ifndef CAMP_H
 #define CAMP_H
 
+#include "types.h"
+
+/**
+ * @brief Funzione che inizializza i valori di partenza della partita
+ * @param p Partita l'oggetto che descrive la partita
+ * 
+*/
+void inizializzaPartita(Partita *p);
+
 /**
  * @brief Crea la lista concatenata che contiene i naufraghi appartenenti alla squadra
  * @param p Partita che contiene al suo interno la lista dei naufraghi
@@ -29,6 +38,12 @@ void aggiungiNaufrago(Partita *p);
 */
 void rimuoviNaufrago(Partita *p, int id);
 
+/**
+ * @brief Funzione che svuota completamente la lista dei naufraghi
+ * @param p Partita che contiene al suo interno la lista dei naufraghi
+ * 
+*/
+void liberaLista(Partita *p)
 
 /**
  * @brief Funzione che mostra il menu principale di avvio del gioco, gestendo l'inserimento del morse sos per i trucchi (intanto la metto qua)
@@ -54,7 +69,7 @@ void menuTrucchi(Partita *p);
  * @brief Funzione che permette di pulire il buffer dai caratteri in eccesso
  *
 */
-void pulisciBuffer();
+void pulisciBuffer(void);
 
 /**
  * @brief Funzione che permette di impostare un valore personalizzato dei ps che i naufraghi hanno ad inizio partita
@@ -89,6 +104,6 @@ void rivelaCaselle(Partita *p);
  * @param p Partita, che contiene i dati del gioco da avviare
  *
 */
-void sbloccaMissioneFinale(Partita *p)
+void sbloccaMissioneFinale(Partita *p);
 
 #endif
